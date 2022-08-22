@@ -1,0 +1,49 @@
+.form {
+	max-width: 55.5rem;
+	margin: auto;
+	display: flex;
+
+	&.invalid {
+		border: 2px solid #dc3545;
+		border-radius: 1.5rem;
+	}
+
+	input {
+		width: 90%;
+		padding: 1.8rem 2.4rem;
+		font-size: 1.8rem;
+		font-weight: 400;
+		border: none;
+		outline: none;
+		border-top-left-radius: 1.5rem;
+		border-bottom-left-radius: 1.5rem;
+	}
+
+	button {
+		width: 10%;
+		background-color: #000;
+		border-top-right-radius: 1.5rem;
+		border-bottom-right-radius: 1.5rem;
+		cursor: pointer;
+		border: none;
+		outline: none;
+		transition: all 0.4s ease;
+
+		&:hover {
+			background-color: var(--primary-color);
+		}
+	}
+
+	@media screen and (max-width: 37.5em) {
+		max-width: 90%;
+
+		input {
+			width: 80%;
+			font-size: 1.4rem;
+		}
+
+		button {
+			width: 20%;
+		}
+	}
+}
