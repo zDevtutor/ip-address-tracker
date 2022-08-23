@@ -72,6 +72,11 @@ body {
 	animation-name: moveFromTop;
 	animation-timing-function: ease;
 	animation-duration: 1s;
+
+	@media screen and (max-width: 37.5em) {
+		font-size: 1.4rem;
+		margin-top: 0.4rem;
+	}
 }
 
 .loading {
