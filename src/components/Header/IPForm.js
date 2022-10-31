@@ -3,10 +3,11 @@ import React, { Fragment, useState } from 'react';
 import './IPForm.scss';
 
 import ArrowIcon from '../../assets/images/icon-arrow.svg';
+import { useEffect } from 'react';
 
 function IPForm(props) {
 	const [enteredValue, setEnteredValue] = useState('');
-	const [inputIsTouched, setInputIsTouched] = useState(true);
+	const [inputIsValid, setInputIsValid] = useState(true);
 
 	const domainRegex = new RegExp(
 		'(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\\.)+[a-zA-Z-]{2,63}$)'
@@ -16,45 +17,41 @@ function IPForm(props) {
 		'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
 	);
 
-	const inputValue = enteredValue.trim().toLowerCase();
-
-	const inputIsValid =
-		inputValue !== '' &&
-		(domainRegex.test(inputValue) || IPAddressRegex.test(inputValue));
-
 	const inputChangeHandler = event => {
 		setEnteredValue(event.target.value);
-	};
-
-	const inputBlurHandler = event => {
-		if (inputIsValid) {
-			setInputIsTouched(true);
-		} else {
-			setInputIsTouched(false);
-		}
 	};
 
 	const submitFormHandler = event => {
 		event.preventDefault();
 
-		if (!inputIsValid) return;
+		const inputValue = enteredValue.trim().toLowerCase();
 
-		setEnteredValue('');
-		setInputIsTouched(true);
-
-		props.onGetLocation(enteredValue);
+		if (
+			inputValue !== '' &&
+			(domainRegex.test(inputValue) || IPAddressRegex.test(inputValue))
+		) {
+			setInputIsValid(true);
+			props.onGetLocation(inputValue);
+		} else {
+			setInputIsValid(false);
+		}
 	};
 
-	const formInvalidClasses = inputIsTouched ? 'form' : 'form invalid';
+	useEffect(() => {
+		if (props.error) {
+			setInputIsValid(false);
+		}
+	}, [props.error]);
 
 	return (
-		<Fragment>
-			<form className={formInvalidClasses} onSubmit={submitFormHandler}>
+		<>
+			<form
+				className={inputIsValid ? 'form' : 'form invalid'}
+				onSubmit={submitFormHandler}>
 				<input
 					type='text'
 					placeholder='Search for any IP address or domain'
 					onChange={inputChangeHandler}
-					onBlur={inputBlurHandler}
 					value={enteredValue}
 					autoFocus
 				/>
@@ -62,12 +59,12 @@ function IPForm(props) {
 					<img src={ArrowIcon} alt='submit button' />
 				</button>
 			</form>
-			{!inputIsTouched && (
+			{!inputIsValid && (
 				<p className='error-text'>
 					Please Enter A valid IP Address or Domain Name
 				</p>
 			)}
-		</Fragment>
+		</>
 	);
 }
 

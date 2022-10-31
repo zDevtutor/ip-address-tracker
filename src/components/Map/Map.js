@@ -7,7 +7,7 @@ import LocationIcon from '../../assets/images/icon-location.svg';
 import './Map.scss';
 
 function Map(props) {
-	const { location } = props.locationData;
+	const { location } = props.location;
 
 	const position = [location.lat, location.lng];
 
@@ -21,7 +21,11 @@ function Map(props) {
 	};
 
 	return (
-		<MapContainer center={position} zoom={13} className='map'>
+		<MapContainer
+			key={`${location.lat}-${location.lang}`}
+			center={position}
+			zoom={13}
+			className='map'>
 			<TileLayer
 				attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 				url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -33,4 +37,4 @@ function Map(props) {
 	);
 }
 
-export default Map;
+export default React.memo(Map);

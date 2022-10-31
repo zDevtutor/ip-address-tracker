@@ -9,7 +9,7 @@ function Header(props) {
 	return (
 		<header className='header'>
 			<h1 className='primary-heading'>IP Address Tracker</h1>
-			<IPForm onGetLocation={props.onGetLocationData} />
+			<IPForm onGetLocation={props.onGetLocationData} error={props.error} />
 			<IPBox locationData={props.locationData} />
 		</header>
 	);

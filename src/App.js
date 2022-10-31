@@ -1,42 +1,61 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Header from './components/Header/Header';
 import Map from './components/Map/Map';
 
 function App() {
 	const [location, setLocation] = useState('');
-	const [locationData, setLocationData] = useState({});
-	const [isLoaded, setIsloaded] = useState(false);
+	const [locationData, setLocationData] = useState({
+		ip: '',
+		location: {
+			country: '',
+			region: '',
+			timezone: '',
+		},
+		isp: '',
+	});
+	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
 
-	const getLocationHandler = useCallback(location => {
+	const getLocationHandler = location => {
 		setLocation(location);
-		setIsloaded(false);
-	}, []);
+	};
 
 	useEffect(() => {
-		fetch(
-			`${process.env.REACT_APP_IPIFY_URL}?apiKey=${process.env.REACT_APP_IPIFY_KEY}&domain=${location}&ipAddress=${location}`
-		)
-			.then(response => response.json())
-			.then(data => setLocationData(() => data))
-			.then(() => setIsloaded(true))
-			.catch(err => setError(err.message));
+		const fetchLocationData = async () => {
+			try {
+				const { data } = await axios.get(
+					`${process.env.REACT_APP_IPIFY_URL}?apiKey=${process.env.REACT_APP_IPIFY_KEY}&domain=${location}&ipAddress=${location}`
+				);
+
+				setLocationData(data);
+				setIsLoading(false);
+				setError(null);
+			} catch (err) {
+				setError(err.message);
+				setIsLoading(false);
+			}
+		};
+
+		fetchLocationData();
 	}, [location]);
 
 	return (
-		<div className='app'>
-			{isLoaded && (
-				<>
-					<Header
-						locationData={locationData}
-						onGetLocationData={getLocationHandler}
-						error={error}
-					/>
-					<Map locationData={locationData} />
-				</>
+		<>
+			<Header
+				locationData={locationData}
+				onGetLocationData={getLocationHandler}
+				error={error}
+			/>
+
+			{isLoading && !error ? (
+				<h1 className='loading'>Is Loading...</h1>
+			) : error ? (
+				<h1 className='error'>{error}</h1>
+			) : (
+				<Map location={locationData} />
 			)}
-			{!isLoaded && <h1 className='loading'>Is Loading...</h1>}
-		</div>
+		</>
 	);
 }
 
